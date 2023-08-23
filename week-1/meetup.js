@@ -46,17 +46,17 @@ connection.connect((err) => {
 
       // Tables
       const createTablesQueries = [
-        `CREATE TABLE Invitee (
+        `CREATE TABLE IF NOT EXISTS Invitee (
       invitee_no INT AUTO_INCREMENT PRIMARY KEY, 
       invitee_name VARCHAR(30), 
       invited_by VARCHAR(50)
     )`,
-        `CREATE TABLE Room (
+        `CREATE TABLE IF NOT EXISTS Room (
       room_no INT AUTO_INCREMENT PRIMARY KEY,
       room_name VARCHAR(20) NOT NULL, 
       floor_number INT NOT NULL
     )`,
-        `CREATE TABLE Meeting (
+        `CREATE TABLE IF NOT EXISTS Meeting (
       meeting_no INT AUTO_INCREMENT PRIMARY KEY,
       meeting_title VARCHAR(30),
       starting_time DATETIME NOT NULL, 
