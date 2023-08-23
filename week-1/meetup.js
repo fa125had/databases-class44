@@ -28,11 +28,8 @@ connection.connect((err) => {
 
   const dbName = "meetup";
 
-  // delete existing db with same name
-  connection.query(`DROP DATABASE ${dbName}`);
-
   // create the db
-  connection.query(`CREATE DATABASE ${dbName}`, (err, result) => {
+  connection.query(`CREATE DATABASE IF NOT EXISTS ${dbName}`, (err, result) => {
     if (err) {
       console.log(`Error Creating DB: ${err.stack}`);
       return;
