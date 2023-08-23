@@ -1,101 +1,97 @@
-const express = require("express");
-const mysql = require("mysql");
-const app = express();
+/*
+Create a database called meetup
+Make a connection to your database, using your MySQL hyfuser login credentials
+Create a table called Invitee with the following fields (invitee_no, invitee_name and invited_by)
+Create a table called Room with the following fields (room_no, room_name and floor_number)
+Create a table called Meeting with the following fields (meeting_no, meeting_title, starting_time, ending_time ,room_no)
+Insert 5 rows into each table with relevant fields. Find a way to create the data for those fields
+Test your code by executing node <FILE_NAME> in the terminal. Then check your MySQL database and see if everything has been created as expected. Please, be sure your file can be run more than once. You can drop and create the database every time the file is run.
+*/
 
-const db = mysql.createConnection({
+import mysql from "mysql";
+
+// Server config
+const connection = mysql.createConnection({
   host: "127.0.0.1",
   user: "hyfuser",
   password: "Hyfpassword@44",
-  database: "meetup",
 });
 
-// Connect to the database
-db.connect((err) => {
+// server connection
+connection.connect((err) => {
   if (err) {
-    console.error("Error connecting to the database: ", err);
+    console.log(`Error Connection: ${err.stack}`);
     return;
   }
-  console.log("Connected to the database");
-});
 
-// Step 3: 3. Create a table called `Invitee` with the following fields (`invitee_no`, `invitee_name` and `invited_by`)
+  console.log(`Connected!`);
 
-const createInviteeTableQuery = `
-  CREATE TABLE IF NOT EXISTS Invitee (
-    invitee_no INT PRIMARY KEY,
-    invitee_name VARCHAR(50),
-    invited_by VARCHAR(50)
-  )
-`;
+  const dbName = "meetup";
 
-db.query(createInviteeTableQuery, (err) => {
-  if (err) {
-    console.error("Error creating Invitee table: ", err);
-  } else {
-    console.log("Invitee table created");
-  }
-});
+  // delete existing db with same name
+  connection.query(`DROP DATABASE ${dbName}`);
 
-// Step 4: Create a table called `Room` with the following fields (`room_no`, `room_name` and `floor_number`)
-
-const createRoomTableQuery = `
-  CREATE TABLE IF NOT EXISTS Room (
-    room_no INT PRIMARY KEY,
-    room_name VARCHAR(50),
-    floor_number INT
-  )
-`;
-
-db.query(createRoomTableQuery, (err) => {
-  if (err) {
-    console.error("Error creating Room table: ", err);
-  } else {
-    console.log("Room table created");
-  }
-});
-
-// Step 5: Create a table called `Meeting` with the following fields (`meeting_no, meeting_title, starting_time, ending_time`,`room_no`)
-
-const createMeetingTableQuery = `
-  CREATE TABLE IF NOT EXISTS Meeting (
-    meeting_no INT PRIMARY KEY,
-    meeting_title VARCHAR(100),
-    starting_time DATETIME,
-    ending_time DATETIME,
-    room_no INT,
-    FOREIGN KEY (room_no) REFERENCES Room(room_no)
-  )
-`;
-
-db.query(createMeetingTableQuery, (err) => {
-  if (err) {
-    console.error("Error creating Meeting table: ", err);
-  } else {
-    console.log("Meeting table created");
-  }
-});
-
-// Step 6: Insert 5 rows into each table with relevant fields. Find a way to create the data for those fields
-
-const insertDataQueries = [
-  `INSERT INTO Invitee (invitee_no, invitee_name, invited_by) VALUES (1, 'John Doe', 'Jane Smith')`,
-  `INSERT INTO Invitee (invitee_no, invitee_name, invited_by) VALUES (2, 'Alice Johnson', 'Bob Brown')`,
-  `INSERT INTO Invitee (invitee_no, invitee_name, invited_by) VALUES (3, 'Michael Williams', 'Emily Davis')`,
-  `INSERT INTO Invitee (invitee_no, invitee_name, invited_by) VALUES (4, 'Sarah Miller', 'David Wilson')`,
-  `INSERT INTO Invitee (invitee_no, invitee_name, invited_by) VALUES (5, 'Daniel Martin', 'Olivia Jones')`,
-];
-
-// Execute the insertion queries
-insertDataQueries.forEach((query) => {
-  db.query(query, (err) => {
+  // create the db
+  connection.query(`CREATE DATABASE ${dbName}`, (err, result) => {
     if (err) {
-      console.error("Error inserting data: ", err);
-    } else {
-      console.log("Data inserted");
+      console.log(`Error Creating DB: ${err.stack}`);
+      return;
     }
-  });
-});
+    console.log(`DB Created successfully: ${dbName}`);
 
-app.listen("3000", () => {
-  console.log("server started on port 3000");
+    // Use meetup db
+    connection.query(`USE ${dbName}`, (err, result) => {
+      if (err) {
+        console.log(`Error using the DB: ${err.stack}`);
+        return;
+      }
+      console.log(`DB in use successfully: ${dbName}`);
+
+      // Tables
+      const createTablesQueries = [
+        `CREATE TABLE Invitee (
+      invitee_no INT AUTO_INCREMENT PRIMARY KEY, 
+      invitee_name VARCHAR(30), 
+      invited_by VARCHAR(50)
+    )`,
+        `CREATE TABLE Room (
+      room_no INT AUTO_INCREMENT PRIMARY KEY,
+      room_name VARCHAR(20) NOT NULL, 
+      floor_number INT NOT NULL
+    )`,
+        `CREATE TABLE Meeting (
+      meeting_no INT AUTO_INCREMENT PRIMARY KEY,
+      meeting_title VARCHAR(30),
+      starting_time DATETIME NOT NULL, 
+      ending_time DATETIME NOT NULL,
+      room_no INT,
+      FOREIGN KEY (room_no) REFERENCES Room(room_no)
+    )`,
+      ];
+
+      // Create tables
+      createTablesQueries.forEach((query) => {
+        connection.query(query, (err) => {
+          if (err) throw err;
+          console.log(`Table created successfully: ${query.split(" ")[2]}`);
+        });
+      });
+
+      // Insert 5 rows into each table [This is just an example. Adjust data as needed.]
+      const insertQueries = [
+        `INSERT INTO Invitee (invitee_name, invited_by) VALUES ('John', 'Doe'), ('Jane', 'Smith'), ('Alice', 'Doe'), ('Bob', 'Smith'), ('Charlie', 'Doe')`,
+        `INSERT INTO Room (room_name, floor_number) VALUES ('Conference Room', 1), ('Meeting Room', 2), ('Board Room', 3), ('Training Room', 1), ('Strategy Room', 2)`,
+        `INSERT INTO Meeting (meeting_title, starting_time, ending_time, room_no) VALUES ('Team Meeting', '2023-08-23 09:00:00', '2023-08-23 10:00:00', 1), ('Board Meeting', '2023-08-23 11:00:00', '2023-08-23 13:00:00', 3), ('Training Session', '2023-08-23 14:00:00', '2023-08-23 16:00:00', 4), ('Project Discussion', '2023-08-23 17:00:00', '2023-08-23 18:00:00', 2), ('Strategy Discussion', '2023-08-23 19:00:00', '2023-08-23 20:00:00', 5)`,
+      ];
+
+      insertQueries.forEach((query) => {
+        connection.query(query, (err) => {
+          if (err) throw err;
+          console.log(`Data inserted into table: ${query.split(" ")[2]}`);
+        });
+      });
+
+      connection.end();
+    });
+  });
 });
