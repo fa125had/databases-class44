@@ -113,6 +113,116 @@ connection.connect((err) => {
           }
         );
 
+        //What's the name of all the countries on the continent ‘Europe’?
+        connection.query(
+          `
+          SELECT name
+          FROM country
+          WHERE continent = 'Europe' OR 'europe'
+          ORDER BY name ASC
+        `,
+          (err, result) => {
+            if (err) throw err;
+
+            console.log(
+              `What's the name of all the countries on the continent Europe?`,
+              result
+            );
+          }
+        );
+
+        //List all the countries in the descending order of their surface areas
+        connection.query(
+          `
+          SELECT name, surfaceArea
+          FROM country 
+          ORDER BY surfaceArea DESC
+        `,
+          (err, result) => {
+            if (err) throw err;
+
+            console.log(
+              `List all the countries in the descending order of their surface areas`,
+              result
+            );
+          }
+        );
+
+        //What are the names of all the cities in the Netherlands?
+        connection.query(
+          `
+          SELECT name
+          FROM city
+          WHERE countryCode = 'nld'  
+          ORDER BY name ASC
+        `,
+          (err, result) => {
+            if (err) throw err;
+
+            console.log(
+              `What are the names of all the cities in the Netherlands?`,
+              result
+            );
+          }
+        );
+
+        //What is the population of Rotterdam?
+        connection.query(
+          `
+          SELECT population
+          FROM city
+          WHERE name = 'rotterdam'
+        `,
+          (err, result) => {
+            if (err) throw err;
+
+            console.log(`What is the population of Rotterdam?`, result);
+          }
+        );
+
+        //What's the top 10 countries by Surface Area?
+        connection.query(
+          `
+          SELECT name, surfaceArea
+          FROM country 
+          ORDER BY surfaceArea DESC
+          LIMIT 10
+        `,
+          (err, result) => {
+            if (err) throw err;
+
+            console.log(`What's the top 10 countries by Surface Area?`, result);
+          }
+        );
+
+        //What's the top 10 most populated cities?
+        connection.query(
+          `
+          SELECT name, population
+          FROM city
+          ORDER BY population DESC
+          LIMIT 10
+        `,
+          (err, result) => {
+            if (err) throw err;
+
+            console.log(`What's the top 10 most populated cities?`, result);
+          }
+        );
+
+        //What is the population number of the world?
+        connection.query(
+          `
+          SELECT SUM(population) AS 'World population'
+          FROM country
+        `,
+          (err, result) => {
+            if (err) throw err;
+
+            console.log(`What is the population number of the world?`, result);
+          }
+        );
+
         //Disconnecting from the server
         connection.end((err) => {
           if (err) {
