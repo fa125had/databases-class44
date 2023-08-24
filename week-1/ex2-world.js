@@ -49,14 +49,14 @@ connection.connect((err) => {
         return;
       }
 
-      console.log(`the db created successfully!`);
+      console.log(`the db created successfully!: ${dbName}`);
 
       // use the db
       connection.query(`USE ${dbName}`, (err) => {
         if (err) {
-          console.log(`Error, cant use ${dbName}`, err.stack);
+          console.log(`Error, can not use ${dbName}`, err.stack);
         }
-        console.log(`successfully using ${dbName}`);
+        console.log(`successfully using: ${dbName}`);
 
         // Queries
         //What are the names of countries with population greater than 8 million?
