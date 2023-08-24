@@ -34,19 +34,29 @@ connection.connect((err) => {
     return;
   }
 
-  console.log(`Connected!`);
+  console.log(`Connected to the server successfully!`);
 
   const dbName = "meetup";
 
-  // create the db
-  connection.query(`CREATE DATABASE IF NOT EXISTS ${dbName}`, (err) => {
+  // delete the db if it's exist
+  connection.query(`DROP DATABASE IF EXISTS ${dbName}`, (err) => {
     if (err) {
       console.log(`Error Creating DB: ${err.stack}`);
       return;
     }
-    console.log(`DB Created successfully: ${dbName}`);
 
-    // Use meetup db
+    console.log(`Old database deleted successfully: ${dbName}`);
+  });
+
+  // create the db
+  connection.query(`CREATE DATABASE ${dbName}`, (err) => {
+    if (err) {
+      console.log(`Error Creating DB: ${err.stack}`);
+      return;
+    }
+    console.log(`new DB Created successfully: ${dbName}`);
+
+    // Use the db
     connection.query(`USE ${dbName}`, (err) => {
       if (err) {
         console.log(`Error using the DB: ${err.stack}`);
@@ -56,17 +66,17 @@ connection.connect((err) => {
 
       // Tables
       const createTablesQueries = [
-        `CREATE TABLE IF NOT EXISTS Invitee (
+        `CREATE TABLE Invitee (
           invitee_no INT AUTO_INCREMENT PRIMARY KEY, 
           invitee_name VARCHAR(30), 
           invited_by VARCHAR(50)
         )`,
-        `CREATE TABLE IF NOT EXISTS Room (
+        `CREATE TABLE Room (
           room_no INT AUTO_INCREMENT PRIMARY KEY,
           room_name VARCHAR(20) NOT NULL, 
           floor_number INT NOT NULL
         )`,
-        `CREATE TABLE IF NOT EXISTS Meeting (
+        `CREATE TABLE Meeting (
           meeting_no INT AUTO_INCREMENT PRIMARY KEY,
           meeting_title VARCHAR(30),
           starting_time dateTIME NOT NULL, 
@@ -80,7 +90,7 @@ connection.connect((err) => {
       createTablesQueries.forEach((query) => {
         connection.query(query, (err) => {
           if (err) throw err;
-          console.log(`Table created successfully: ${query.split(" ")[5]}`);
+          console.log(`Table created successfully: ${query.split(" ")[2]}`);
         });
       });
 
@@ -111,7 +121,10 @@ connection.connect((err) => {
         });
       });
 
-      connection.end();
+      connection.end((err) => {
+        if (err) throw err;
+        console.log(`Disconnected successfully!`);
+      });
     });
   });
 });
