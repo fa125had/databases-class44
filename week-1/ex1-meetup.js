@@ -68,20 +68,20 @@ connection.connect((err) => {
       const createTablesQueries = [
         `CREATE TABLE Invitee (
           invitee_no INT AUTO_INCREMENT PRIMARY KEY, 
-          invitee_name VARCHAR(30), 
+          invitee_name VARCHAR(30) NOT NULL, 
           invited_by VARCHAR(50)
         )`,
         `CREATE TABLE Room (
-          room_no INT AUTO_INCREMENT PRIMARY KEY,
+          room_no SMALLINT AUTO_INCREMENT PRIMARY KEY,
           room_name VARCHAR(20) NOT NULL, 
-          floor_number INT NOT NULL
+          floor_number TINYINT NOT NULL
         )`,
         `CREATE TABLE Meeting (
           meeting_no INT AUTO_INCREMENT PRIMARY KEY,
           meeting_title VARCHAR(30),
-          starting_time dateTIME NOT NULL, 
-          ending_time dateTIME NOT NULL,
-          room_no INT,
+          starting_time DATETIME NOT NULL, 
+          ending_time DATETIME NOT NULL,
+          room_no INT NOT NULL,
           FOREIGN KEY (room_no) REFERENCES Room(room_no)
         )`,
       ];
@@ -97,7 +97,11 @@ connection.connect((err) => {
       // Insert 5 rows into each table
       const insertQueries = [
         `INSERT INTO Invitee (invitee_name, invited_by) 
-          VALUES ('John', 'Doe'), ('Jane', 'Smith'), ('Alice', 'Doe'), ('Bob', 'Smith'), ('Charlie', 'Doe')`,
+          VALUES  ('John', NULL), 
+                  ('Jane', 'John'), 
+                  ('Sara', 'Jane'), 
+                  ('Mary', 'Jane'), 
+                  ('Rose', 'Jane')`,
 
         `INSERT INTO Room (room_name, floor_number) 
           VALUES  ('Conference Room', 1), 
