@@ -118,7 +118,7 @@ connection.connect((err) => {
           `
           SELECT name
           FROM country
-          WHERE continent = 'Europe' OR 'europe'
+          WHERE continent = 'Europe'
           ORDER BY name ASC
         `,
           (err, result) => {
@@ -153,7 +153,7 @@ connection.connect((err) => {
           `
           SELECT name
           FROM city
-          WHERE countryCode = 'nld'  
+          WHERE countryCode = 'NLD'  
           ORDER BY name ASC
         `,
           (err, result) => {
@@ -171,7 +171,7 @@ connection.connect((err) => {
           `
           SELECT population
           FROM city
-          WHERE name = 'rotterdam'
+          WHERE name = 'Rotterdam'
         `,
           (err, result) => {
             if (err) throw err;
