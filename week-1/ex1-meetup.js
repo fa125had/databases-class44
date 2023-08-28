@@ -81,7 +81,7 @@ connection.connect((err) => {
           meeting_title VARCHAR(30),
           starting_time DATETIME NOT NULL, 
           ending_time DATETIME NOT NULL,
-          room_no INT NOT NULL,
+          room_no SMALLINT NOT NULL,
           FOREIGN KEY (room_no) REFERENCES Room(room_no)
         )`,
       ];
