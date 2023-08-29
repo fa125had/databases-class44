@@ -11,16 +11,20 @@
 import { connectToDB, createAndUseDB } from "./utils/db.js";
 import { createTable } from "./utils/createTable.js";
 
-// Server config
+// Server connection config
 const connection = connectToDB();
+
+// DB config
 const dbName = "library";
+const table = "authors";
+const newColumn = "mentor";
 
 // Create and use the db
 createAndUseDB(connection, dbName, () => {
-  // Create authors table
+  // Create the table
   createTable(
     connection,
-    "authors",
+    `${table}`,
     `(
       author_id INT AUTO_INCREMENT PRIMARY KEY,
       author_name VARCHAR(100) NOT NULL,
@@ -37,17 +41,16 @@ createAndUseDB(connection, dbName, () => {
     // Add the new column
     connection.query(
       `
-      ALTER TABLE authors
-      ADD COLUMN mentor INT,
-      ADD CONSTRAINT fk_mentor
-      FOREIGN KEY (mentor) REFERENCES authors(author_id)
-      `,
+      ALTER TABLE ${table} 
+      ADD COLUMN ${newColumn} INT, 
+      ADD CONSTRAINT fk_${newColumn} 
+      FOREIGN KEY (${newColumn}) REFERENCES ${table}(author_id)`,
       (err) => {
         if (err) {
-          console.log(`Error adding new column: mentor\n${err}`);
+          console.log(`Error adding new column: ${newColumn}\n${err}`);
           return;
         }
-        console.log(`New column added successfully: mentor`);
+        console.log(`New column added successfully: ${newColumn}`);
         connection.end();
       }
     );

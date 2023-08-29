@@ -20,28 +20,20 @@ export const connectToDB = () => {
 };
 
 export const createAndUseDB = (connection, dbName, callback) => {
-  connection.query(`DROP DATABASE IF EXISTS ${dbName}`, (err) => {
+  connection.query(`CREATE DATABASE IF NOT EXISTS ${dbName}`, (err) => {
     if (err) {
-      console.log(`Error dropping DB: ${err.stack}`);
+      console.log(`Error creating DB: ${err.stack}`);
       return;
     }
-    console.log(`Old database deleted successfully: ${dbName}`);
+    console.log(`DataBase is Ready to use: ${dbName}`);
 
-    connection.query(`CREATE DATABASE ${dbName}`, (err) => {
+    connection.query(`USE ${dbName}`, (err) => {
       if (err) {
-        console.log(`Error creating DB: ${err.stack}`);
+        console.log(`Error using the DB: ${err.stack}`);
         return;
       }
-      console.log(`New DB created successfully: ${dbName}`);
-
-      connection.query(`USE ${dbName}`, (err) => {
-        if (err) {
-          console.log(`Error using the DB: ${err.stack}`);
-          return;
-        }
-        console.log(`DB in use successfully: ${dbName}`);
-        callback();
-      });
+      console.log(`Switched to the DB successfully: ${dbName}`);
+      callback();
     });
   });
 };
