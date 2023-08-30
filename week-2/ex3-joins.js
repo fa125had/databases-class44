@@ -13,15 +13,16 @@ const dbName = "library";
 const connection = connectToDB();
 
 createAndUseDB(connection, dbName, () => {
-  // Query 1: Print Names of All Authors and Their Corresponding Mentors
+  // Print Names of All Authors and Their Corresponding Mentors
   connection.query(
     `
-    SELECT a1.author_name AS Author, a2.author_name AS Mentor
-    FROM authors a1
-    LEFT JOIN authors a2 ON a1.mentor = a2.author_id;`,
+    SELECT authors.name AS 'Author Name', authors.mentor AS 'Mentor ID'
+    FROM authors
+    JOIN authors AS mentors
+      ON authors.mentor = mentors.id;`,
     (err, results) => {
       if (err) {
-        console.log(`Error executing query 1: ${err}`);
+        console.log(`Error executing: ${err}`);
         return;
       }
       console.log("Authors and their Mentors:");
@@ -29,15 +30,18 @@ createAndUseDB(connection, dbName, () => {
     }
   );
 
-  // Query 2: Print All Columns of Authors and Their Published Paper Titles
+  // Print All Columns of Authors and Their Published Paper Titles
   connection.query(
-    `SELECT a.*, rp.paper_title
-    FROM authors a
-    LEFT JOIN author_paper_rel apr ON a.author_id = apr.author_id
-    LEFT JOIN research_papers rp ON apr.paper_id = rp.paper_id;`,
+    `
+    SELECT authors.name AS 'Author Name', research_papers.title AS 'Research Title'
+    FROM authors
+    LEFT JOIN authors_papers
+      ON authors.id = authors_papers.author_id
+    LEFT JOIN research_papers
+      ON authors_papers.paper_id = research_papers.id;`,
     (err, results) => {
       if (err) {
-        console.log(`Error executing query 2: ${err}`);
+        console.log(`Error executing: ${err}`);
         return;
       }
       console.log("Authors and their Research Papers:");

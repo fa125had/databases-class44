@@ -49,7 +49,7 @@ createAndUseDB(connection, dbName, () => {
   );
 
   // Insert data
-  // 15 authors
+  // Add 15 authors
   for (let i = 0; i < 15; i++) {
     const date = moment().format("YYYY-MM-DD HH:mm:ss");
 
@@ -63,7 +63,7 @@ createAndUseDB(connection, dbName, () => {
     );
   }
 
-  // 30 research papers
+  // Add 30 research papers
   for (let i = 0; i < 30; i++) {
     const date = moment().format("YYYY-MM-DD HH:mm:ss");
     connection.query(
@@ -76,11 +76,41 @@ createAndUseDB(connection, dbName, () => {
     );
   }
 
+  // Update mentor field for test ex3 queries
+  for (let i = 0; i < 15; i++) {
+    // Random mentor ID between 1 and 10
+    const mentorId = Math.floor(Math.random() * 10) + 1;
+
+    connection.query(
+      `
+    UPDATE authors 
+    SET mentor = ${mentorId}
+    WHERE id = ${i}`,
+      (err) => {
+        if (err) console.log(err);
+      }
+    );
+  }
+
+  // Insert data into authors_papers for test ex3 queries
+  for (let i = 1; i <= 15; i++) {
+    connection.query(
+      `
+      INSERT INTO authors_papers (author_id, paper_id) 
+      VALUES (${i}, ${i})`,
+      (err) => {
+        if (err) console.log(err);
+      }
+    );
+  }
+
   // Last query to close the connection async
   connection.query(`SELECT 1`, (err) => {
     if (err) console.log(err);
     console.log(`15 Authors added to authors table successfully.`);
     console.log(`30 papers added research_paper table successfully.`);
+    console.log(`mentor column data inserted successfully.`);
+    console.log(`mock data inserted into junction table successfully.`);
 
     connection.end();
   });
