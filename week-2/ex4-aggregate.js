@@ -19,10 +19,11 @@ createAndUseDB(connection, dbName, () => {
   // All research papers and the number of authors that wrote that paper
   connection.query(
     `
-    SELECT rp.paper_title, COUNT(apr.author_id) AS num_authors
-    FROM research_papers rp
-    LEFT JOIN author_paper_rel apr ON rp.paper_id = apr.paper_id
-    GROUP BY rp.paper_id;`,
+    SELECT research_papers.title, COUNT(authors_papers.id) AS 'Number of authors'
+    FROM research_papers
+    LEFT JOIN authors_papers 
+      ON research_papers.id = authors_papers.paper_id
+    GROUP BY research_papers.id;`,
     (err, results) => {
       if (err) {
         console.log(`Error executing query: ${err}`);
@@ -36,11 +37,13 @@ createAndUseDB(connection, dbName, () => {
   // Sum of the research papers published by all female authors
   connection.query(
     `
-    SELECT COUNT(rp.paper_id) AS num_papers
-    FROM authors a
-    JOIN author_paper_rel apr ON a.author_id = apr.author_id
-    JOIN research_papers rp ON apr.paper_id = rp.paper_id
-    WHERE a.gender = 'female';`,
+    SELECT COUNT(research_papers.id) AS 'Number of papers'
+    FROM authors
+    JOIN authors_papers
+      ON authors.id = authors_papers.author_id
+    JOIN research_papers
+      ON authors_papers.paper_id = research_papers.id
+    WHERE authors.gender = 'female';`,
     (err, results) => {
       if (err) {
         console.log(`Error executing: ${err}`);
@@ -70,11 +73,13 @@ createAndUseDB(connection, dbName, () => {
   // Sum of the research papers of the authors per university
   connection.query(
     `
-    SELECT a.university, COUNT(rp.paper_id) AS num_papers
-    FROM authors a
-    JOIN author_paper_rel apr ON a.author_id = apr.author_id
-    JOIN research_papers rp ON apr.paper_id = rp.paper_id
-    GROUP BY a.university;`,
+    SELECT authors.university, COUNT(research_papers.id) AS num_papers
+    FROM authors
+    JOIN authors_papers
+      ON authors.id = authors_papers.author_id
+    JOIN research_papers
+      ON authors_papers.paper_id = research_papers.id
+    GROUP BY authors.university;`,
     (err, results) => {
       if (err) {
         console.log(`Error executing: ${err}`);
