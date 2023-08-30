@@ -26,8 +26,8 @@ createAndUseDB(connection, dbName, () => {
     connection,
     `${table}`,
     `(
-      author_id INT AUTO_INCREMENT PRIMARY KEY,
-      author_name VARCHAR(100) NOT NULL,
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      name VARCHAR(100) NOT NULL,
       university VARCHAR(100) NOT NULL,
       date_of_birth DATETIME NOT NULL,
       h_index INT NOT NULL,
@@ -36,23 +36,29 @@ createAndUseDB(connection, dbName, () => {
   );
 
   // Queries
-  // Execute with 1sec delay
-  setTimeout(() => {
-    // Add the new column
-    connection.query(
-      `
+  // Add the new column
+  connection.query(
+    `
       ALTER TABLE ${table} 
       ADD COLUMN ${newColumn} INT, 
-      ADD CONSTRAINT fk_${newColumn} 
-      FOREIGN KEY (${newColumn}) REFERENCES ${table}(author_id)`,
-      (err) => {
-        if (err) {
+      ADD CONSTRAINT fk_${newColumn} FOREIGN KEY (${newColumn}) REFERENCES ${table}(id)`,
+    (err) => {
+      if (err) {
+        if (
+          err.message ==
+          `ER_DUP_FIELDNAME: Duplicate column name '${newColumn}'`
+        ) {
+          console.log(`Column already exist: ${newColumn}`);
+          connection.end();
+          return;
+        } else {
           console.log(`Error adding new column: ${newColumn}\n${err}`);
+          connection.end();
           return;
         }
-        console.log(`New column added successfully: ${newColumn}`);
-        connection.end();
       }
-    );
-  }, 1000);
+      console.log(`New column added successfully: ${newColumn}`);
+      connection.end();
+    }
+  );
 });

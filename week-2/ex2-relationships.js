@@ -28,8 +28,8 @@ createAndUseDB(connection, dbName, () => {
     connection,
     `${table}`,
     `(
-      paper_id INT AUTO_INCREMENT PRIMARY KEY,
-      paper_title VARCHAR(150) NOT NULL,
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      title VARCHAR(150) NOT NULL,
       conference VARCHAR(100) NOT NULL,
       publish_date DATETIME NOT NULL
     )`
@@ -38,13 +38,13 @@ createAndUseDB(connection, dbName, () => {
   // Create junction table for authors and papers to handle many<==>many connection
   createTable(
     connection,
-    "author_paper_rel",
+    "authors_papers",
     `(
-      author_paper_rel INT AUTO_INCREMENT PRIMARY KEY,
+      id INT AUTO_INCREMENT PRIMARY KEY,
       author_id INT,
       paper_id INT,
-      FOREIGN KEY (author_id) REFERENCES authors(author_id),
-      FOREIGN KEY (paper_id) REFERENCES research_papers(paper_id)
+      FOREIGN KEY (author_id) REFERENCES authors(id),
+      FOREIGN KEY (paper_id) REFERENCES research_papers(id)
     )`
   );
 
@@ -55,8 +55,8 @@ createAndUseDB(connection, dbName, () => {
 
     connection.query(
       `
-      INSERT INTO authors (author_name, university, date_of_birth, h_index, gender) 
-      VALUES ('Author${i}', 'University${i}', '${date}', '${i}', '?')`,
+      INSERT INTO authors (name, university, date_of_birth, h_index, gender) 
+      VALUES ('Author${i}', 'University${i}', '${date}', '${i}', NULL)`,
       (err) => {
         if (err) console.log(err);
       }
@@ -68,7 +68,7 @@ createAndUseDB(connection, dbName, () => {
     const date = moment().format("YYYY-MM-DD HH:mm:ss");
     connection.query(
       `
-      INSERT INTO research_papers (paper_title, conference, publish_date) 
+      INSERT INTO research_papers (title, conference, publish_date) 
       VALUES ('Paper${i}', 'Conference${i}', '${date}')`,
       (err) => {
         if (err) console.log(err);
