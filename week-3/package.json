@@ -1,0 +1,15 @@
+{
+  "name": "week-3",
+  "version": "1.0.0",
+  "description": "The manager of the dinner club would like to manage the information system that assists him to keep track of the dinners had by members. Because the manager is not an expert of Information Systems, she uses the following table to store the information. Please help the manger by using the knowledge of database normal forms.",
+  "main": "transaction.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "mysql": "^2.18.1"
+  }
+}
